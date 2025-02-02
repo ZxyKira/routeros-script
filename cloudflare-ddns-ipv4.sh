@@ -55,7 +55,11 @@ if ([:typeof [($cache->"now")]] = nil ) do={
       #------------------------------------------------------------------------------------------------------------------------------------
       if ([:len $cfDnsRecodeId] = 0) do= {
         :log info ("[DDNS] try to found DNS Recode ID")
-        :set ddnsURL "https://api.cloudflare.com/client/v4/zones/$cfZoneID/dns_records?type=A&name=$ddnsHostname.$ddnsDomain"
+        if ($ddnsHostname = "@") do= {
+          :set ddnsURL "https://api.cloudflare.com/client/v4/zones/$cfZoneID/dns_records?type=A&name=$ddnsDomain"
+        } else {
+          :set ddnsURL "https://api.cloudflare.com/client/v4/zones/$cfZoneID/dns_records?type=A&name=$ddnsHostname.$ddnsDomain"
+        }
         :set result [:tool fetch url=$ddnsURL http-method=get mode=https \
         http-header-field="Authorization: Bearer $cfToken,content-type:application/json" as-value output=user]
         
